@@ -6,58 +6,23 @@ beforeEach(() => {
 
 describe('Section 1: Functional tests', () => {
     it('User can submit form with valid data and only mandatory fields added', ()=>{
-        // Add test steps for filling in ONLY mandatory fields 
-        cy.get('#username').type('John01')
-        cy.get('#email').type('aurevoir@ipanema.ee')   
-        cy.get('#applicationForm > input:nth-child(10)').type('John')
-        cy.get('#lastName').type('Smith') 
-        cy.get('#applicationForm > input:nth-child(17)').type('8775048423')
-        cy.get('#password').type('Qwerty')
-        cy.get('#confirm').type('Qwerty{enter}')
-
+        // Add test steps for filling in ONLY mandatory fields
         // Assert that submit button is enabled
-        cy.get('.submit_button').should('be.enabled');
-        cy.get('.submit_button').click()
         // Assert that after submitting the form system show successful message
-        cy.get('#success_message').should('be.visible');
-
     })
 
     it('User can submit form with all fields added', ()=>{
         // Add test steps for filling in ALL fields
-        cy.get('#username').type('John01')
-        cy.get('#email').type('aurevoir@ipanema.ee')   
-        cy.get('#applicationForm > input:nth-child(10)').type('John')
-        cy.get('#lastName').type('Smith') 
-        cy.get('#applicationForm > input:nth-child(17)').type('8775048423') 
-        cy.get('#password').type('Qwerty')
-        cy.get('#confirm').type('Qwerty{enter}')      
-
         // Assert that submit button is enabled
-        cy.get('.submit_button').should('be.enabled');
-        cy.get('.submit_button').click()
         // Assert that after submitting the form system show successful message
-        cy.get('#success_message').should('be.visible');
     })
 
     it('User can use only same both first and validation passwords', ()=>{
         // Add test steps for filling in only mandatory fields
-        cy.get('#username').type('John01')
-        cy.get('#email').type('aurevoir@ipanema.ee')   
-        cy.get('#applicationForm > input:nth-child(10)').type('John')
-        cy.get('#lastName').type('Smith') 
-        cy.get('#applicationForm > input:nth-child(17)').type('8775048423') 
         // Type confirmation password which is different from first password
-        cy.get('#password').type('Qwerty1')
-        cy.get('#confirm').type('Qwerty{enter}')     
-       
         // Assert that submit button is not enabled
-        cy.get('.submit_button').should('be.disabled')
-    
         // Assert that successful message is not visible
-        cy.get('#success_message').should('not.be.visible')
         // Assert that error message is visible
-        cy.get('#password_error_message').should('be.visible')
     })
 
     it('Check that submit button cannot be selected if username is empty', () => {
@@ -65,19 +30,10 @@ describe('Section 1: Functional tests', () => {
         cy.get('button[class="submit_button"]').should('be.disabled')
 
         // use function in order to fill the form with correct data
-        
-        function inputValidData(inputText){
-            cy.get('#id').type(inputText);
-        }
+        inputValidData()
 
         // Add steps for emptying username input field
-        cy.get('#username').clear()
-        cy.get('#email').type('aurevoir@ipanema.ee')   
-        cy.get('#applicationForm > input:nth-child(10)').type('John')
-        cy.get('#lastName').type('Smith') 
-        cy.get('#applicationForm > input:nth-child(17)').type('8775048423')
-        cy.get('#password').type('Qwerty')
-        cy.get('#confirm').type('Qwerty{enter}') 
+
         // Assert that submit button is still disabled
         cy.get('button[class="submit_button"]').should('be.disabled')
     })
@@ -95,17 +51,26 @@ describe('Section 2: Visual tests', () => {
         // get element and check its parameter height, to be equal 178
         cy.get('img').invoke('height').should('be.lessThan', 178)
             .and('be.greaterThan', 100)
+        cy.get('img').should('have.attr', 'height').and('equal','166')
     })
 
-    // Create similar test for checking second picture
-    it('Check that logo is correct and has correct size 2', () => { 
-        cy.log('Will check logo 2 source and size')
-        cy.get('img').should('have.attr', 'src').should('include', 'cerebrum_hub_logo')
-        //
-        cy.get('[data-cy="cypress_logo"]').invoke('height').should('be.lessThan', 116)
-            .and('be.greaterThan', 80)
+    // Solution to Workshop #7, testing second picture
+    it('NEW: Check that second picture is correct and has correct size', () => {
+        // next lines do exactly the same, the difference is only in selector
+        cy.get('[data-cy="cypress_logo"]').should('have.attr', 'src','cypress_logo.png')
+        cy.get('img').eq(1).should('have.attr', 'src','cypress_logo.png')
 
+        // get element and check its parameter height, to be equal 88
+        // next 3 rows do exactly the same
+        cy.get('[data-cy="cypress_logo"]').invoke('height').should('equal', 88)
+        cy.get('[data-cy="cypress_logo"]').should('have.attr', 'height').and('equal','88')
+        cy.get('[data-cy="cypress_logo"]').should('have.attr', 'height', 88)
 
+        // get element and check its parameter width, to be equal 116
+        // next 3 rows do exactly the same
+        cy.get('[data-cy="cypress_logo"]').invoke('width').should('equal', 116)
+        cy.get('[data-cy="cypress_logo"]').should('have.attr', 'width').and('equal','116')
+        cy.get('[data-cy="cypress_logo"]').should('have.attr', 'width',116)
     })
 
 
@@ -119,24 +84,30 @@ describe('Section 2: Visual tests', () => {
             .click()
         // Check that currently opened URL is value:
         cy.url().should('contain', '/registration_form_1.html')
+
         // Visit previous page
         cy.go('back')
         cy.log('Back again in registration form 2')
     })
 
-    it('Check that URL to Cerebrum Hub page is correct and clickable', () => {
-        //Create similar test for checking second link to Cerebrum Hub homepage 
-        cy.get('nav').siblings('h1').should('have.text', 'Registration form number 2')      
+    // Solution to Workshop #7, testing second URL
+    it('NEW: Check that URL to Cerebrum Hub page is correct and clickable', () => {
         cy.get('nav').children().eq(1).should('be.visible')
-        .and('have.attr', 'href', 'https://cerebrumhub.com/')
-        .click()
+            .and('have.attr', 'href', 'https://cerebrumhub.com/')
+        
+        // !!!For next command to work, you need to add to file cypress.config.js:
+        // chromeWebSecurity: false
+        // click on the second link in navigation, because eq(1) means second element!
+        cy.get('nav>a').eq(1).click()
+        
+        // Check that correct URL is open
+        cy.url().should('contain', 'cerebrumhub.com')
+        
+        // Go back to previous page
+        cy.go('back')
 
-       //
-       cy.location('href').should('contain', 'https://cerebrumhub.com/')
-       //
-       cy.go('back')
-       cy.log('Back again in registration form 2')
-
+        // Check again that correct URL is open
+        cy.url().should('contain', 'registration_form_2.html')
     })
 
     it('Check that radio button list is correct', () => {
@@ -148,24 +119,47 @@ describe('Section 2: Visual tests', () => {
         <label for="htmlFavLanguage">HTML</label><br>
          */
         cy.get('input[type="radio"]').next().eq(0).should('have.text','HTML').and('not.be.checked')
+        cy.get('[for="htmlFavLanguage"]').should('have.text', 'HTML')
+
         cy.get('input[type="radio"]').next().eq(1).should('have.text','CSS').and('not.be.checked')
         cy.get('input[type="radio"]').next().eq(2).should('have.text','JavaScript').and('not.be.checked')
         cy.get('input[type="radio"]').next().eq(3).should('have.text','PHP').and('not.be.checked')
 
         // Selecting one will remove selection from other radio button
-        cy.get('input[type="radio"]').eq(0).check().should('be.checked')
+        cy.get('input[type="radio"]').eq(0).click().should('be.checked')
         cy.get('input[type="radio"]').eq(1).check().should('be.checked')
         cy.get('input[type="radio"]').eq(0).should('not.be.checked')
     })
 
-    it('Check that checkbox list is correct', () => {
-        // Create test similar to previous one
-        cy.get('input[type="radio"]').eq(0).check().should('be.checked')
-        cy.get('input[type="radio"]').eq(2).check().should('be.checked')
-        cy.get('input[type="radio"]').eq(1).should('not.be.checked')
-    })
+    // Solution to Workshop #7, testing checkboxes
+    it('NEW: Check that checkbox list is correct', () => {
+        // Array has totally 3 elements
+        // next 3 rows check exactly the same, the difference is only in the selector
+        cy.get('input[class="checkbox vehicles"]').should('have.length', 3)
+        cy.get('input.vehicles').should('have.length', 3)
+        cy.get('.vehicles').should('have.length', 3)
+        
+        // Check each checkbox text
+        // For educational purposes I used different selectors each time
+        cy.get('#vehicle1').next().should('have.text','I have a bike').and('not.be.checked')
+        cy.get('[for="vehicle2"]').should('have.text','I have a car').and('not.be.checked')
+        cy.get('label[for="vehicle3"]').should('have.text','I have a boat').and('not.be.checked')
 
-    
+        // Multiple checkboxes can be selected
+        // Function check() or click() can be used
+        cy.get('#vehicle1').check().should('be.checked')
+        cy.get('#vehicle2').click().should('be.checked')
+
+        // first checkbox is still checked, after checking second checkbox
+        cy.get('#vehicle1').should('be.checked')
+        
+        // Uncheck first checkbox and verify
+        cy.get('#vehicle1').uncheck().should('not.be.checked')
+
+        // You can check, verify and uncheck all in one chained command:
+        cy.get('#vehicle2').check().should('be.checked')
+            .uncheck().should('not.be.checked')
+    })
 
     it('Car dropdown is correct', () => {
         // Select second element and create screenshot for this area, and full page
@@ -183,11 +177,29 @@ describe('Section 2: Visual tests', () => {
         })
     })
 
-    it('Favourite animal dropdown is correct', () => {
-        // Create test similar to previous one
+    // Solution to Workshop #7, testing education favourite animal dropdown
+    it('NEW: Favourite animal dropdown is correct', () => {
+        // Different solutions how get array length of elements in animal dropdown
         cy.get('#animal').children().should('have.length', 6)
         cy.get('#animal').find('option').should('have.length', 6)
-        cy.get('#animal').find('option').eq(1).should('have.text', 'Cat')
+        cy.get('#animal > option').should('have.length', 6)
+        
+        // Check content of animal dropdown
+        cy.get('#animal').find('option').eq(0).should('have.text', 'Dog')
+        cy.get('#animal > option').eq(1).should('have.text', 'Cat')
+        cy.get('#animal').children().eq(2).should('have.text', 'Snake')
+        cy.get('#animal > option').eq(3).should('have.text', 'Hippo')
+        cy.get('#animal > option').eq(4).should('have.text', 'Cow')
+        cy.get('#animal > option').eq(5).should('have.text', 'Horse')
+        
+        // Check content of animal dropdown in shorter, but more complex way :)
+        // Please notice, that value and text are different for some options!
+        // for example, visible text is Cow, but html value is spider
+        // <option value="spider">Cow</option>
+        cy.get('#animal').children().then(animalList => {
+            const listFromPage = [...animalList].map(option => option.value)
+            expect(listFromPage).to.deep.equal(['dog', 'cat', 'snake', 'hippo', 'spider', 'mouse'])
+        })
     })
 })
 

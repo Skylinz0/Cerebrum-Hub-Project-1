@@ -6,83 +6,84 @@ beforeEach(() => {
 
 describe('Section 1: Functional tests', () => {
     it('User can submit form with valid data and only mandatory fields added', ()=>{
-        // Add test steps for filling in ONLY mandatory fields 
-        cy.get('#username').type('John01')
-        cy.get('#email').type('aurevoir@ipanema.ee')   
-        cy.get('#applicationForm > input:nth-child(10)').type('John')
-        cy.get('#lastName').type('Smith') 
-        cy.get('#applicationForm > input:nth-child(17)').type('8775048423')
-        cy.get('#password').type('Qwerty')
-        cy.get('#confirm').type('Qwerty{enter}')
-
+        // Add test steps for filling in ONLY mandatory fields
         // Assert that submit button is enabled
-        cy.get('.submit_button').should('be.enabled');
-        cy.get('.submit_button').click()
         // Assert that after submitting the form system show successful message
-        cy.get('#success_message').should('be.visible');
 
-    })
+        cy.get('#username').type('username');
+        cy.get('#email').type('username@username.com');
+        cy.get('input[placeholder="John"]').type('FirstName');
+        cy.get('#lastName').type('Lastname');
 
-    it('User can submit form with all fields added', ()=>{
-        // Add test steps for filling in ALL fields
-        cy.get('#username').type('John01')
-        cy.get('#email').type('aurevoir@ipanema.ee')   
-        cy.get('#applicationForm > input:nth-child(10)').type('John')
-        cy.get('#lastName').type('Smith') 
-        cy.get('#applicationForm > input:nth-child(17)').type('8775048423') 
-        cy.get('#password').type('Qwerty')
-        cy.get('#confirm').type('Qwerty{enter}')      
+        cy.get('[data-testid="phoneNumberTestId"]').type('326172317');
+        cy.get('input[name="password"]').type('Qwerty');
+        cy.get('[name="confirm"]').type('Qwerty{enter}');
 
-        // Assert that submit button is enabled
-        cy.get('.submit_button').should('be.enabled');
-        cy.get('.submit_button').click()
-        // Assert that after submitting the form system show successful message
-        cy.get('#success_message').should('be.visible');
-    })
+        cy.get('.submit_button').should('be.enabled')
+
+        cy.get('#success_message').should('be.visible').and('contain', 'User successfully submitted registration');
+    });
+
+    it('User can submit form with all fields added', () => {
+        cy.get('#username').type('username');
+        cy.get('#email').type('username@username.com');
+        cy.get('input[placeholder="John"]').type('FirstName');
+        cy.get('#lastName').type('Lastname');
+        cy.get('[data-testid="phoneNumberTestId"]').type('326172317');
+        cy.get('#cars').select('Saab').invoke('val').should('eq', 'saab');
+        cy.get('#animal').select('Hippo').invoke('val').should('eq', 'hippo');
+        cy.get('input[name="password"]').type('Qwerty');
+        cy.get('[name="confirm"]').type('Qwerty{enter}');
+
+        cy.get('.submit_button').should('be.enabled')
+
+        cy.get('#success_message').should('be.visible').and('contain', 'User successfully submitted registration');
+    });
 
     it('User can use only same both first and validation passwords', ()=>{
         // Add test steps for filling in only mandatory fields
-        cy.get('#username').type('John01')
-        cy.get('#email').type('aurevoir@ipanema.ee')   
-        cy.get('#applicationForm > input:nth-child(10)').type('John')
-        cy.get('#lastName').type('Smith') 
-        cy.get('#applicationForm > input:nth-child(17)').type('8775048423') 
         // Type confirmation password which is different from first password
-        cy.get('#password').type('Qwerty1')
-        cy.get('#confirm').type('Qwerty{enter}')     
-       
         // Assert that submit button is not enabled
-        cy.get('.submit_button').should('be.disabled')
-    
         // Assert that successful message is not visible
-        cy.get('#success_message').should('not.be.visible')
         // Assert that error message is visible
-        cy.get('#password_error_message').should('be.visible')
-    })
+
+        cy.get('#username').type('username');
+        cy.get('#email').type('username@username.com');
+        cy.get('input[placeholder="John"]').type('FirstName');
+        cy.get('#lastName').type('Lastname');
+        cy.get('[data-testid="phoneNumberTestId"]').type('326172317');
+        cy.get('#cars').select('Saab').invoke('val').should('eq', 'saab');
+        cy.get('#animal').select('Hippo').invoke('val').should('eq', 'hippo');
+        cy.get('input[name="password"]').type('Qwerty');
+        cy.get('[name="confirm"]').type('Qwerty2{enter}');
+        cy.get('#success_message').should('not.be.visible');
+        cy.get('#password_error_message').should('be.visible').and('contain', 'Passwords do not match!');
+    });
 
     it('Check that submit button cannot be selected if username is empty', () => {
         // Submit button by default is disabled and cannot be clicked
-        cy.get('button[class="submit_button"]').should('be.disabled')
+        cy.get('button[class="submit_button"]').should('be.disabled');
 
         // use function in order to fill the form with correct data
-        
-        function inputValidData(inputText){
-            cy.get('#id').type(inputText);
-        }
+        inputValidData();
 
         // Add steps for emptying username input field
-        cy.get('#username').clear()
-        cy.get('#email').type('aurevoir@ipanema.ee')   
-        cy.get('#applicationForm > input:nth-child(10)').type('John')
-        cy.get('#lastName').type('Smith') 
-        cy.get('#applicationForm > input:nth-child(17)').type('8775048423')
-        cy.get('#password').type('Qwerty')
-        cy.get('#confirm').type('Qwerty{enter}') 
+        cy.get('#username').clear();
         // Assert that submit button is still disabled
-        cy.get('button[class="submit_button"]').should('be.disabled')
-    })
+        cy.get('button[class="submit_button"]').should('be.disabled');
+    });
 
-    //Add more similar tests for checking other mandatory field's absence
+    // Add more similar tests for checking other mandatory field's absence
+
+    it.only('Check that submit button is disabled when first name is empty', () => {
+        cy.get('button[class="submit_button"]').should('be.disabled');
+
+        inputValidData();
+
+        cy.get('#lastName').clear();
+        cy.get('button[class="submit_button"]').should('be.disabled');
+    });
+
 
 })
 
@@ -98,16 +99,6 @@ describe('Section 2: Visual tests', () => {
     })
 
     // Create similar test for checking second picture
-    it('Check that logo is correct and has correct size 2', () => { 
-        cy.log('Will check logo 2 source and size')
-        cy.get('img').should('have.attr', 'src').should('include', 'cerebrum_hub_logo')
-        //
-        cy.get('[data-cy="cypress_logo"]').invoke('height').should('be.lessThan', 116)
-            .and('be.greaterThan', 80)
-
-
-    })
-
 
     it('Check navigation part', () => {
         cy.get('nav').children().should('have.length', 2)
@@ -125,18 +116,7 @@ describe('Section 2: Visual tests', () => {
     })
 
     it('Check that URL to Cerebrum Hub page is correct and clickable', () => {
-        //Create similar test for checking second link to Cerebrum Hub homepage 
-        cy.get('nav').siblings('h1').should('have.text', 'Registration form number 2')      
-        cy.get('nav').children().eq(1).should('be.visible')
-        .and('have.attr', 'href', 'https://cerebrumhub.com/')
-        .click()
-
-       //
-       cy.location('href').should('contain', 'https://cerebrumhub.com/')
-       //
-       cy.go('back')
-       cy.log('Back again in registration form 2')
-
+        //Create similar test for checking second link to Cerebrum Hub homepage
     })
 
     it('Check that radio button list is correct', () => {
@@ -160,12 +140,7 @@ describe('Section 2: Visual tests', () => {
 
     it('Check that checkbox list is correct', () => {
         // Create test similar to previous one
-        cy.get('input[type="radio"]').eq(0).check().should('be.checked')
-        cy.get('input[type="radio"]').eq(2).check().should('be.checked')
-        cy.get('input[type="radio"]').eq(1).should('not.be.checked')
     })
-
-    
 
     it('Car dropdown is correct', () => {
         // Select second element and create screenshot for this area, and full page
@@ -185,9 +160,6 @@ describe('Section 2: Visual tests', () => {
 
     it('Favourite animal dropdown is correct', () => {
         // Create test similar to previous one
-        cy.get('#animal').children().should('have.length', 6)
-        cy.get('#animal').find('option').should('have.length', 6)
-        cy.get('#animal').find('option').eq(1).should('have.text', 'Cat')
     })
 })
 
@@ -203,6 +175,6 @@ function inputValidData() {
     // To get multiple classes user .class1.class2 selector
     cy.get('#confirm').type('MyPass')
     cy.get('[name="confirm"]').type('InvalidMyPass')
-    cy.get('h2').contains('Password').click()
+    cy.get('body').click(0,0)
 }
 
