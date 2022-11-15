@@ -142,7 +142,7 @@ Task list:
  */
 
 describe('Second test suite for functional tests', () => {
-    it('Add all the fields', () => {
+    it('Add all the fields on from', () => {
         //Name
         cy.get('#name').clear().type('Marily')
         //Email
@@ -165,7 +165,7 @@ describe('Second test suite for functional tests', () => {
         cy.go('back')          
                             
     });
-    it('Mandatory fields are filled', () => {  
+    it('Check Mandatory fields are only filled', () => {  
         //Email      
         cy.get('.email').type('marilytest@mail.com')
         //Country and City
