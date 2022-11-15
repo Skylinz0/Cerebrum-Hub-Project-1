@@ -10,6 +10,10 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+<<<<<<< HEAD
     "cypress": "^10.11.0"
+=======
+    "cypress": "^10.1.0"
+>>>>>>> a0b711d452a72c9cefa4c8892d04dae291f6a9c0
   }
 }
